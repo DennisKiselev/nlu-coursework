@@ -2,7 +2,7 @@ import typing
 from dataclasses import dataclass
 import pandas as pd
 import os
-
+import torch
 
 @dataclass(frozen=True)
 class DatasetKeys:
@@ -44,7 +44,7 @@ def load_data(
 
 def load_data_csv(
     filepath: str,
-) -> typing.Tuple[typing.List[str], typing.List[str], typing.List[int]]:
+) -> typing.Tuple[typing.List[str], typing.List[str], torch.tensor]:
     """
     Will load in data from the csv filepath specified. Expects the string filepath to a csv file. Returns tuple of the premises, hypotheses and labels
     """
@@ -52,4 +52,7 @@ def load_data_csv(
     premises = dataset[DatasetKeys.PREMISE_KEY].astype(str).tolist()
     hypotheses = dataset[DatasetKeys.HYPOTHESIS_KEY].astype(str).tolist()
     labels = dataset[DatasetKeys.LABEL_KEY].astype(str).tolist()
+    
+    #Convert labels to tensors
+    labels = torch.tensor([int(x) for x in labels])
     return (premises, hypotheses, labels)
