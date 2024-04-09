@@ -8,8 +8,8 @@ from sklearn.metrics import (
     f1_score,
     matthews_corrcoef,
     precision_recall_fscore_support,
+    log_loss,
 )
-
 
 @dataclass
 class MacroMetric:
@@ -38,12 +38,15 @@ class MetricKeys:
     F1: MacroMetric = MacroMetric(key="F1-Score")
     RECALL: MacroMetric = MacroMetric(key="Recall")
     MCC_KEY: str = "MCC"
+    LOSS_KEY: str = "Loss"
 
 
 def evaluate(true_labels: np.array, predicted_labels: np.array) -> pd.DataFrame:
     """
     Uses the true and predicted labels & sklearn to create extensive evaluation metrics. Formats into a dataframe that it returns
     """
+    loss = log_loss(true_labels, predicted_labels)
+
     accuracy = accuracy_score(true_labels, predicted_labels)
 
     precision, recall, f1, support = precision_recall_fscore_support(
@@ -79,6 +82,7 @@ def evaluate(true_labels: np.array, predicted_labels: np.array) -> pd.DataFrame:
                 macro_f1,
                 weighted_f1,
                 mcc,
+                loss,
             ]
         ],
         columns=[
@@ -93,6 +97,7 @@ def evaluate(true_labels: np.array, predicted_labels: np.array) -> pd.DataFrame:
             MetricKeys.F1.MACRO_KEY,
             MetricKeys.F1.WEIGHTED_KEY,
             MetricKeys.MCC_KEY,
+            MetricKeys.LOSS_KEY,
         ],
     )
     return df
