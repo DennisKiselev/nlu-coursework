@@ -11,6 +11,7 @@ from sklearn.metrics import (
     log_loss,
 )
 
+
 @dataclass
 class MacroMetric:
     """
@@ -41,11 +42,17 @@ class MetricKeys:
     LOSS_KEY: str = "Loss"
 
 
-def evaluate(true_labels: np.array, predicted_labels: np.array) -> pd.DataFrame:
+def evaluate(true_labels: np.array, predicted_logits: np.array) -> pd.DataFrame:
     """
     Uses the true and predicted labels & sklearn to create extensive evaluation metrics. Formats into a dataframe that it returns
+
+    true_labels:        (N) sized array storing the true (0, 1) labels of the data
+    predicted_logits:   (N, 2) sized array storing the predicted logits from the model, therefore the predicted probabilities for either class
     """
-    loss = log_loss(true_labels, predicted_labels)
+    loss = log_loss(true_labels, predicted_logits)  # Uses logits for loss
+
+    # Otherwise utilises argmax of the prediction logits, to get the predicted labels
+    predicted_labels = np.argmax(predicted_logits, axis=1)
 
     accuracy = accuracy_score(true_labels, predicted_labels)
 
