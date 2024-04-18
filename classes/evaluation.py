@@ -9,8 +9,9 @@ from sklearn.metrics import (
     matthews_corrcoef,
     precision_recall_fscore_support,
     log_loss,
+    confusion_matrix,
+    ConfusionMatrixDisplay,
 )
-
 
 @dataclass
 class MacroMetric:
@@ -108,3 +109,23 @@ def evaluate(true_labels: np.array, predicted_logits: np.array) -> pd.DataFrame:
         ],
     )
     return df
+
+@dataclass
+class ClassLabels:
+    """
+    Dataclass for the string class labels. Used in the confusion matrix generation
+    """
+    ZERO_KEY: str = "Not Entailing"
+    ONE_KEY: str = "Entailing"
+
+def draw_confusion_matrix(true_labels: np.array, predicted_logits: np.array, classes: typing.List[str] = [ClassLabels.ZERO_KEY, ClassLabels.ONE_KEY]) -> np.array:
+  """
+  Will make a confusion matrix using the predicted and true values & will display this. Returns the confusion matrix as an array
+  """
+  predicted_labels = np.argmax(predicted_logits, axis=1)
+
+  conf_mat = confusion_matrix(true_labels, predicted_labels)
+  disp = ConfusionMatrixDisplay(confusion_matrix=conf_mat, display_labels=classes)
+  disp.plot()
+  plt.show()
+  return conf_mat
