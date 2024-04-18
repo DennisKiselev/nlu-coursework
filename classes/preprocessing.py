@@ -8,6 +8,7 @@ from nltk.corpus import wordnet, stopwords
 from itertools import chain
 import nltk
 import numpy as np
+from evaluation import GeneralKeys
 
 nltk.download("wordnet")
 nltk.download("stopwords")
@@ -21,9 +22,9 @@ class DatasetKeys:
     Dataclass associated with keys for the data csvs
     """
 
-    PREMISE_KEY: str = "premise"
-    HYPOTHESIS_KEY: str = "hypothesis"
-    LABEL_KEY: str = "label"
+    PREMISE_KEY: str = GeneralKeys.PREMISE_KEY.lower()
+    HYPOTHESIS_KEY: str = GeneralKeys.HYPOTHESIS_KEY.lower()
+    LABEL_KEY: str = GeneralKeys.LABEL_KEY.lower()
 
 
 @dataclass(frozen=True)

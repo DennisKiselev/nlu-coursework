@@ -16,6 +16,20 @@ import matplotlib.pyplot as plt
 import typing
 
 
+@dataclass(frozen=True)
+class GeneralKeys:
+    """
+    Dataclass for general keys for the process
+    """
+
+    PREMISE_KEY: str = "Premise"
+    HYPOTHESIS_KEY: str = "Hypothesis"
+    LABEL_KEY: str = "Label"
+    LOSS_KEY: str = "Loss"
+    PREDICTED_KEY: str = "Predicted Label"
+    TRUE_KEY: str = "True Label"
+
+
 @dataclass
 class MacroMetric:
     """
@@ -139,3 +153,55 @@ def draw_confusion_matrix(
     disp.plot()
     plt.show()
     return conf_mat
+
+
+def most_confused_samples(
+    true_logits: np.array,
+    predicted_logits: np.array,
+    premises: typing.List[str],
+    hypotheses: typing.List[str],
+    num: int = 5,
+    loss_function: callable = keras.losses.categorical_crossentropy,
+) -> pd.DataFrame:
+    """
+    Will print the num samples with the highest loss
+
+    true_logits:        (N, 2) sized array storing the one hot encoded labels of the data
+    predicted_logits:   (N, 2) sized array storing the predicted logits from the model, therefore the predicted probabilities for either class
+    premises:           (N) sized array storing the string premises
+    hypotheses:         (N) sized array storing the string hypotheses
+
+    num:                Integer number of samples to report about. The top M (or num) samples will be displayed
+    loss_function:      Executable function used for the loss calculation. By default this is just categorical cross entropy
+    """
+    # Gets the samples that have the highest loss
+    loss_per_sample = [
+        loss.numpy() for loss in loss_function(true_logits, predicted_logits)
+    ]
+    largest_indices = np.argsort(loss_per_sample)[-num:][::-1]
+
+    predicted_labels = np.argmax(predicted_logits, axis=1)
+    true_labels = np.argmax(true_logits, axis=1)
+
+    # Makes the dataframe with the confused samples
+    confused_samples = [
+        [
+            premises[i],
+            hypotheses[i],
+            loss_per_sample[i],
+            predicted_labels[i],
+            true_labels[i],
+        ]
+        for i in largest_indices
+    ]
+    df = pd.DataFrame(
+        confused_samples,
+        columns=[
+            GeneralKeys.PREMISE_KEY,
+            GeneralKeys.HYPOTHESIS_KEY,
+            GeneralKeys.LOSS_KEY,
+            GeneralKeys.PREDICTED_KEY,
+            GeneralKeys.TRUE_KEY,
+        ],
+    )
+    return df
