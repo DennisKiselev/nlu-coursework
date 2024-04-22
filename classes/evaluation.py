@@ -14,7 +14,7 @@ from sklearn.metrics import (
 )
 import matplotlib.pyplot as plt
 import typing
-import keras
+
 
 @dataclass(frozen=True)
 class GeneralKeys:
