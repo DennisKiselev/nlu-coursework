@@ -8,10 +8,13 @@ The following describes the structure of the submission. Files end in "_B" or "_
 
 - **Test predictions** - Contained in correct format in **Group_17_B.csv** and and **Group_17_C.csv**
 - **Training code** - Contained in python notebooks **training_B.ipynb** and **training_C.ipynb**
+    - At the top of the notebook, this variable need to be set:
+      - *cls_filepath* - path to the **classes** directory, which should contain **evaluation.py** and **preprocessing.py**
 - **Evaluation code** - Contained in python notebooks **evaluation_B.ipynb** and **evaluation_C.ipynb**
   - Needs to be placed in the same directory as its model files
   - Outputs metrics in code block, and predictions to a csv file
   - At the top of the notebook, these variables need to be set:
+    - *cls_filepath* - path to the **classes** directory, which should contain **evaluation.py** and **preprocessing.py**
     - *dataset_path* - path to dataset used for evaluation, in **.csv** format
     - *labels_path* - path to output predictions to, in **.csv** format
     - For method B:
