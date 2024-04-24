@@ -8,7 +8,7 @@ from nltk.corpus import wordnet, stopwords
 from itertools import chain
 import nltk
 import numpy as np
-from classes.evaluation import GeneralKeys
+from evaluation import GeneralKeys
 
 nltk.download("wordnet")
 nltk.download("stopwords")
